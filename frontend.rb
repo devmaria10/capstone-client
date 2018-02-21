@@ -40,14 +40,91 @@ def run
     input_option = gets.chomp
 
     if input_option == "1"
-      users_index_action
+        response = Unirest.get("http://localhost:3000/users")
+
+        puts JSON.pretty_generate(response.body)
     elsif input_option == "2"
-      users_show_action
+        print "Enter a user id: "
+        input_id = gets.chomp
+
+        response = Unirest.get("http://localhost:3000/users/#{input_id}")
+        user = response.body
+        puts JSON.pretty_generate(user)
     elsif input_option == "3"
-      users_create_action
+        client_params = users_new_form
+        response = Unirest.post("http://localhost:3000/users", parameters: client_params)
+
+        if response.code == 200
+            user = User.new(response.body)
+            users_show_view(user)
+        elsif response.code == 422
+            errors = response.body["errors"]
+            users_errors_view(errors)
+        elsif response.code == 401
+        
+        puts JSON.pretty_generate(response.body)
+        end 
     elsif input_option == "4"
-      users_update_action
+        print "Enter a user id: "
+        input_id = gets.chomp
+
+        response = Unirest.get("http://localhost:3000/users/#{input_id}")
+        user = response.body
+
+        puts "Enter new information for user ##{input_id}"
+        client_params = {}
+
+        print "First Name (#{user["first_name"]}): "
+        client_params[:first_name] = gets.chomp
+
+        print "Last Name (#{user["last_name"]}): "
+        client_params[:last_name] = gets.chomp
+
+        print "Date of Birth (#{user["dob"]}): "
+        client_params[:dob] = gets.chomp
+
+        print "Street Address (#{user["street_address"]}): "
+        client_params[:street_address] = gets.chomp
+
+        print "City (#{user["city"]}): "
+        client_params[:city] = gets.chomp
+
+        print "State (#{user["state"]}): "
+        client_params[:state] = gets.chomp
+
+        print "Zip (#{user["zip"]}): "
+        client_params[:zip] = gets.chomp
+
+        print "Phone Number (#{user["phone_number"]}): "
+        client_params[:phone_number] = gets.chomp
+
+        print "Email (#{user["email"]}): "
+        client_params[:email] = gets.chomp
+
+        client_params.delete_if {|key, value| value.empty? }
+
+        response = Unirest.patch(
+                          "http://localhost:3000/users/#{input_id}",
+                          parameters: client_params
+                          )
+
+        if response.code == 200
+            user = response.body
+            puts JSON.pretty_generate(user)
+        else
+            errors = response.body["errors"]
+            puts
+            puts "Your user did not update"
+            puts "please look at the following reasons"
+            puts "------------------------------------"
+            errors.each do |error|
+            puts error
+        end
     elsif input_option == "5"
-      users_destroy_action
+        print "Enter a user id that you want to delete: "
+        input_id = gets.chomp
+
+        response = Unirest.delete("http://localhost:3000/users/#{input_id}")
+        data = response.body
     end 
 end 
