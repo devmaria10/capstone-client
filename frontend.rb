@@ -42,7 +42,9 @@ class Frontend
             if input_option == "1"
                 response = Unirest.get("http://localhost:3000/users")
 
-                puts JSON.pretty_generate(response.body)
+                # puts JSON.pretty_generate(response.body)
+
+                p response.body
 
             elsif input_option == "2"
                 print "Enter a user id to view information for that user: "
