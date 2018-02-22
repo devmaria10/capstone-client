@@ -83,12 +83,6 @@ class Frontend
                 print "Email: "
                 client_params[:email] = gets.chomp
 
-                print "Password: "
-                client_params[:password] = gets.chomp
-
-                print "Enter Password Again: "
-                client_params[:passworddigest] = gets.chomp
-
                 response = Unirest.post(
                                         "http://localhost:3000/users",
                                         parameters: client_params
@@ -143,12 +137,6 @@ class Frontend
 
                 print "Email (#{user["email"]}): "
                 client_params[:email] = gets.chomp
-
-                print "Password: (#{user["password"]}): "
-                client_params[:password] = gets.chomp
-
-                print "Enter Password Again: (#{user["passworddigest"]}): "
-                client_params[:passworddigest] = gets.chomp
 
                 client_params.delete_if {|key, value| value.empty? }
 
