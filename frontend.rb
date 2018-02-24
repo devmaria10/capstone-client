@@ -7,35 +7,36 @@ class Frontend
             system "clear"
 
             puts "Welcome to MyCancerCoach"
-            puts "Make a Selection"
-            puts "[1] See all users"
-            puts "[2] See one user"
-            puts "[3] Create a new user"
-            puts "[4] Update a user"
-            puts "[5] Delete a user"
+            puts "      Make a Selection"
+            puts "          [1] See all users"
+            puts "          [2] See one user"
+            puts "          [3] Create a new user"
+            puts "          [4] Update a user"
+            puts "          [5] Delete a user"
 
-            puts "[6] See all diagnoses"
-            puts "[7] See one diagnosis"
-            puts "[8] Add a diagnosis"
-            puts "[9] Update a diagnosis"
-            puts "[10] Delete a diagnosis"
+            puts "          [6] See all diagnoses"
+            puts "          [7] See one diagnosis"
+            puts "          [8] Add a diagnosis"
+            puts "          [9] Update a diagnosis"
+            puts "          [10] Delete a diagnosis"
 
-            puts "[11] See all providers"
-            puts "[12] See one provider"
-            puts "[13] Create a new provider"
-            puts "[14] Update a provider"
-            puts "[15] Delete a provider"
+            puts "          [11] See all providers"
+            puts "          [12] See one provider"
+            puts "          [13] Create a new provider"
+            puts "          [14] Update a provider"
+            puts "          [15] Delete a provider"
 
-            puts "[16] See all medications"
-            puts "[17] See one medication"
-            puts "[18] Add a medication"
-            puts "[19] Update a medication"
-            puts "[20] Delete a medication"
+            puts "          [16] See all medications"
+            puts "          [17] See one medication"
+            puts "          [18] Add a medication"
+            puts "          [19] Update a medication"
+            puts "          [20] Delete a medication"
+            puts "---------------------------------------"
 
-            puts "[signup] Sign up for a MyCancerCoach account (create a user)"
-            puts "[login] Log in to your MyCancerCoach account"
-            puts "[logout] Log out of your MyCancerCoach account"
-            puts "[q] Quit"
+            puts "          [Signup] Sign up for a MyCancerCoach account (create a user)"
+            puts "          [Login] Log in to your MyCancerCoach account"
+            puts "          [Logout] Log out of your MyCancerCoach account"
+            puts "          [q] Quit"
 
             input_option = gets.chomp
 
@@ -420,8 +421,78 @@ class Frontend
                 response = Unirest.delete("http://localhost:3000/medications/#{input_id}")
                 data = response.body
 
+            elsif input_option == "Signup"
+                puts "Signup for your MyCancerCoach account!"
+                puts
+                client_params = {}
+
+                print "First Name: "
+                client_params[:first_name] = gets.chomp
+
+                print "Last Name: "
+                client_params[:last_name] = gets.chomp
+
+                print "Date of Birth: "
+                client_params[:dob] = gets.chomp
+
+                print "Street Address: "
+                client_params[:street_address] = gets.chomp
+
+                print "City: "
+                client_params[:city] = gets.chomp
+
+                print "State: "
+                client_params[:state] = gets.chomp
+
+                print "Zip: "
+                client_params[:zip] = gets.chomp
+
+                print "Phone Number: "
+                client_params[:phone_number] = gets.chomp
+
+                print "Email: "
+                client_params[:email] = gets.chomp
+        
+                print "Password: "
+                client_params[:password] = gets.chomp
+        
+                print "Password confirmation: "
+                client_params[:password_confirmation] = gets.chomp
+        
+                response = Unirest.post("http://localhost:3000/users", parameters: client_params)
+
+                user = response.body
+                puts JSON.pretty_generate(response.body) 
+
+            elsif input_option == "Login"
+                puts "Login"
+                puts
+                print "Email: "
+                input_email = gets.chomp
+                print "Password: "
+                input_password = gets.chomp
+
+                response = Unirest.post(
+                                        "http://localhost:3000/user_token", 
+                                        parameters: {
+                                              auth: {email: input_email, password: input_password}
+                                            }
+                                )
+
+                jwt = response.body["jwt"]
+                Unirest.default_header("Authorization", "Bearer #{jwt}")
+
+            elsif input_option == "Logout"
+                jwt = ""
+                Unirest.clear_default_headers()
+
+            elsif input_option == "q"
+                puts "Thanks for visiting the MyCancerCoach App!"
+                exit
             end
+
             gets.chomp
+
         end 
     end 
 end 
