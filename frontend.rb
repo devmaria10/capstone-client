@@ -34,6 +34,7 @@ class Frontend
             puts "---------------------------------------"
 
             puts "          [Signup] Sign up for a MyCancerCoach account (create a user)"
+            puts "          [View] View your profile details"
             puts "          [Login] Log in to your MyCancerCoach account"
             puts "          [Logout] Log out of your MyCancerCoach account"
             puts "          [q] Quit"
@@ -85,6 +86,13 @@ class Frontend
 
                 print "Email: "
                 client_params[:email] = gets.chomp
+
+                print "Password: "
+                client_params[:password] = gets.chomp
+
+                print "Password Confirmation: "
+                client_params[:password_confirmation] = gets.chomp 
+
 
                 response = Unirest.post(
                                         "http://localhost:3000/users",
@@ -481,6 +489,15 @@ class Frontend
 
                 jwt = response.body["jwt"]
                 Unirest.default_header("Authorization", "Bearer #{jwt}")
+
+                if jwt
+                    puts "You are logged in"
+                end 
+
+            elsif input_option == "View"
+                response = Unirest.get("http://localhost:3000/view_profile")
+
+                puts JSON.pretty_generate(response.body)
 
             elsif input_option == "Logout"
                 jwt = ""
