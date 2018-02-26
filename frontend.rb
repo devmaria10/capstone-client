@@ -177,6 +177,8 @@ class Frontend
                 response = Unirest.delete("http://localhost:3000/users/#{input_id}")
                 data = response.body
 
+                puts "Your user #{input_id} was deleted successfully"
+
             elsif input_option == "6"
                 response = Unirest.get("http://localhost:3000/diagnoses")
 
@@ -261,6 +263,8 @@ class Frontend
 
                 response = Unirest.delete("http://localhost:3000/diagnoses/#{input_id}")
                 data = response.body
+
+                puts "Diagnosis deleted successfully"
 
             elsif input_option == "11"
                 response = Unirest.get("http://localhost:3000/providers")
@@ -347,6 +351,8 @@ class Frontend
                 response = Unirest.delete("http://localhost:3000/providers/#{input_id}")
                 data = response.body
 
+                puts "Your Provider #{input_id} was deleted successfully"
+
             elsif input_option == "16"
                 response = Unirest.get("http://localhost:3000/medications")
 
@@ -429,6 +435,8 @@ class Frontend
                 response = Unirest.delete("http://localhost:3000/medications/#{input_id}")
                 data = response.body
 
+                puts "Your medication with id #{input_id} was deleted successfully"
+
             elsif input_option == "Signup"
                 puts "Signup for your MyCancerCoach account!"
                 puts
@@ -466,6 +474,8 @@ class Frontend
         
                 print "Password confirmation: "
                 client_params[:password_confirmation] = gets.chomp
+
+                puts "----------------------------------------------------"
         
                 response = Unirest.post("http://localhost:3000/users", parameters: client_params)
 
@@ -502,6 +512,7 @@ class Frontend
             elsif input_option == "Logout"
                 jwt = ""
                 Unirest.clear_default_headers()
+                puts "You are logged out"
 
             elsif input_option == "q"
                 puts "Thanks for visiting the MyCancerCoach App!"
