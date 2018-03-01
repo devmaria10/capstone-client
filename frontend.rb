@@ -31,6 +31,12 @@ class Frontend
             puts "          [18] Add a medication"
             puts "          [19] Update a medication"
             puts "          [20] Delete a medication"
+
+            puts "          [21] See all timers"
+            puts "          [22] See one timer"
+            puts "          [23] Add a timer"
+            puts "          [24] Update a timer"
+            puts "          [25] Delete a timer"
             puts "---------------------------------------"
 
             puts "          [Signup] Sign up for a MyCancerCoach account (create a user)"
@@ -436,6 +442,111 @@ class Frontend
                 data = response.body
 
                 puts "Your medication with id #{input_id} was deleted successfully"
+
+            elsif input_option == "21"
+                response = Unirest.get("http://localhost:3000/timers")
+
+                puts JSON.pretty_generate(response.body)
+
+            elsif input_option == "22"
+                print "Enter a timer id to view timer information: "
+                input_id = gets.chomp
+
+                response = Unirest.get("http://localhost:3000/timers/#{input_id}")
+                timer = response.body
+                puts JSON.pretty_generate(timer)
+
+            elsif input_option == "23"
+                puts "Enter information to add a new timer: "
+                client_params = {}
+
+                print "Timer last rang: "
+                client_params[:last_rang] = gets.chomp
+
+                print "Time Increment (Enter a number): "
+                client_params[:time_increment] = gets.chomp
+
+                print "Increment Unit (Enter unit (e.g., seconds, minutes, hours, days, weeks)):"
+                client_params[:increment_unit] = gets.chomp
+
+                print "Timerable ID:  "
+                client_params[:timerable_id] = gets.chomp
+
+                print "Type of Timer (Enter provider or usermedication):  "
+                client_params[:timerable_type] = gets.chomp
+
+                response = Unirest.post(
+                                        "http://localhost:3000/timers",
+                                        parameters: client_params
+                                        )
+                if response.code == 200 || response.code == 201
+                            timer = response.body
+                            puts JSON.pretty_generate(timer)
+                else
+                    errors = response.body["errors"]
+                    puts
+                    puts "Your timer did not save"
+                    puts "Please look at the following reasons"
+                    puts "------------------------------------"
+                    errors.each do |error|
+                        puts error
+                    end
+                end 
+
+            elsif input_option == "24"
+                print "Enter a timer id to update: "
+                input_id = gets.chomp
+
+                response = Unirest.get("http://localhost:3000/timers/#{input_id}")
+                timer = response.body
+
+                puts "Enter new information to update this timer: "
+                client_params = {}
+
+                print "New timer ##{input_id} last rang : "
+                client_params[:last_rang] = gets.chomp
+
+                print "New time increment for timer ##{input_id} (Enter a number): "
+                client_params[:time_increment] = gets.chomp
+
+                print "New increment unit for timer ##{input_id} (Enter unit (e.g., seconds, minutes, hours, days, weeks)):"
+                client_params[:increment_unit] = gets.chomp
+
+                print "New timerable ID for timer ##{input_id}:  "
+                client_params[:timerable_id] = gets.chomp
+
+                print "Type of timer (Enter provider or medication):  "
+                client_params[:timerable_type] = gets.chomp
+
+                client_params.delete_if {|key, value| value.empty? }
+
+                response = Unirest.patch(
+                                        "http://localhost:3000/timers/#{input_id}",
+                                        parameters: client_params
+                                        )
+
+                if response.code == 200 || response.code == 201
+                    timer = response.body
+                    puts JSON.pretty_generate(timer)
+                else
+                    errors = response.body["errors"]
+                    puts
+                    puts "Your timer did not update"
+                    puts "Please look at the following reasons"
+                    puts "------------------------------------"
+                    errors.each do |error|
+                        puts error
+                    end 
+                end
+
+            elsif input_option == "25"
+                print "Enter a timer id that you want to delete: "
+                input_id = gets.chomp
+
+                response = Unirest.delete("http://localhost:3000/timers/#{input_id}")
+                data = response.body
+
+                puts "Your timer with id #{input_id} was deleted successfully"
 
             elsif input_option == "Signup"
                 puts "Signup for your MyCancerCoach account!"
